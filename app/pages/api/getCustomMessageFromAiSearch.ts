@@ -29,15 +29,28 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
           return res.status(200).json({ success: false, message: "request message is empty" });
         }
 
+        // generateEmbeddings呼び出し時に型変換する
+        const vector: number[] = await generateEmbeddings(requestMessage) as number[];
+        
         const response = await searchClient.search(requestMessage, {
-          vectorQueries: [
-            {
+//          vectorQueries: [
+          //   {
+          //     kind: 'vector',
+          //     vector: await generateEmbeddings(requestMessage),
+          //     kNearestNeighborsCount: 3,
+          //     fields: ['vector'],
+          //   },
+          // ],
+          vectorSearchOptions: {
+            queries:  [{
               kind: 'vector',
-              vector: await generateEmbeddings(requestMessage),
+              //vector: await generateEmbeddings(requestMessage),
+              vector: vector,
               kNearestNeighborsCount: 3,
               fields: ['vector'],
             },
           ],
+          },
           select: ['chunk', 'title'],
           queryType: 'semantic',
           top: 1,
@@ -48,7 +61,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
             },
             captions: {
               captionType: 'extractive',
-              count: 3,
+              //count: 3,
             },
             configurationName: 'vector-kitei-semantic-configuration',
           },
@@ -111,7 +124,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     }
 };
 
-async function generateEmbeddings(text: string): Promise<string> {
+async function generateEmbeddings(text: string): Promise<unknown> {
   const apiVersion = '2023-09-01-preview';
 
   const response = await axios.post(
