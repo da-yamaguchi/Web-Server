@@ -1,6 +1,4 @@
-// import React, { useState } from 'react';
-// import axios from 'axios';
-
+import axios from 'axios';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { customLog } from '@/utils/customLog';
 import { AIRequest } from '@/utils/chat_gpt/ai_requset';
@@ -30,31 +28,56 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
           customLog("requestMessage is empty","DEBUG");
           return res.status(200).json({ success: false, message: "request message is empty" });
         }
-    
+
         const response = await searchClient.search(requestMessage, {
-            BaseVectorQuery: [
-              {
-                kind: 'vector',
-                vector: await generateEmbeddings(requestMessage),
-                kNearestNeighborsCount: 3,
-                fields: ['vector'],
-              },
-            ],
-            select: ['chunk', 'title'],
-            queryType: 'semantic',
-            top: 1,
-            semanticSearchOptions: {
-              answers: {
-                answerType: 'extractive',
-                count: 3,
-              },
-              captions: {
-                captionType: 'extractive',
-                //count: 3,
-              },
-              configurationName: 'vector-kitei-semantic-configuration',
+          vectorQueries: [
+            {
+              kind: 'vector',
+              vector: await generateEmbeddings(requestMessage),
+              kNearestNeighborsCount: 3,
+              fields: ['vector'],
             },
-          });
+          ],
+          select: ['chunk', 'title'],
+          queryType: 'semantic',
+          top: 1,
+          semanticSearchOptions: {
+            answers: {
+              answerType: 'extractive',
+              count: 3,
+            },
+            captions: {
+              captionType: 'extractive',
+              count: 3,
+            },
+            configurationName: 'vector-kitei-semantic-configuration',
+          },
+        });
+              
+        // const response = await searchClient.search(requestMessage, {
+        //   vectorQueries: [
+        //       {
+        //         kind: 'vector',
+        //         vector: await generateEmbeddings(requestMessage),
+        //         kNearestNeighborsCount: 3,
+        //         fields: ['vector'],
+        //       },
+        //     ],
+        //     select: ['chunk', 'title'],
+        //     queryType: 'semantic',
+        //     top: 1,
+        //     semanticSearchOptions: {
+        //       answers: {
+        //         answerType: 'extractive',
+        //         count: 3,
+        //       },
+        //       captions: {
+        //         captionType: 'extractive',
+        //         //count: 3,
+        //       },
+        //       configurationName: 'vector-kitei-semantic-configuration',
+        //     },
+        //   });
           //context.log(`\nSemantic Hybrid search results:`);
           customLog("Semantic Hybrid search results:","DEBUG");
         
@@ -88,6 +111,25 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     }
 };
 
+async function generateEmbeddings(text: string): Promise<string> {
+  const apiVersion = '2023-09-01-preview';
+
+  const response = await axios.post(
+    `${process.env.OPENAI_API_URL}${process.env.OPENAI_API_EMBEDDING_DEPLOYNAME}/embeddings?api-version=${apiVersion}`,
+    {
+      input: text,
+      engine: 'text-embedding-ada-002',
+    },
+    {
+      headers: {
+        'Content-Type': 'application/json',
+        'api-key': process.env.OPENAI_API_KEY,
+      },
+    }
+  );
+  const embeddings = response.data.data[0].embedding;
+  return embeddings;
+}
 
 
 

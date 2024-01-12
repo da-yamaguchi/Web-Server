@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { customLog } from '@/utils/customLog';
 import { AIRequest } from '@/utils/chat_gpt/ai_requset';
