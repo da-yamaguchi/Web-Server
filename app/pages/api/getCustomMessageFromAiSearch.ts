@@ -11,6 +11,7 @@ const OPENAI_URL: string = process.env.OPENAI_API_URL!;
 const searchendpoint: string = process.env.SEARCH_API_ENDPOINT!;
 const searchapiKey: string = process.env.SEARCH_API_KEY!;
 const searchindexname: string = process.env.SEARCH_INDEXNAME!;
+const searchconfigurationname: string = process.env.SEARCH_CONFIGURATION_NAME!;
 
 const searchClient = new SearchClient(
     searchendpoint,
@@ -53,7 +54,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
           captionType: 'extractive',
           //count: 3,
         },
-        configurationName: 'vector-kitei-semantic-configuration',
+        //configurationName: 'vector-kitei-semantic-configuration',
+        configurationName: searchconfigurationname,
       },
     });
           
@@ -75,7 +77,12 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
           customLog("Caption highlights:" + result.highlights,"DEBUG");
         } else {
           customLog("Caption text:" + caption.text,"DEBUG");
-          message = caption.text;
+          if (result.rerankerScore >= 1.35) {
+            message = caption.text;
+          } else {
+            customLog("Reranker Scoreが1.35未満のため、検索結果無しとして動作:","DEBUG");
+          }
+          //message = caption.text;
         }
       } else {
         customLog("No result.captions","DEBUG");
