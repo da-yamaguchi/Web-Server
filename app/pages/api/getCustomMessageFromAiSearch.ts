@@ -66,24 +66,31 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
     for await (const result of response.results) {
       //customLog(result,"DEBUG");
-      customLog("Title:" + result.document.title,"DEBUG");
-      title = result.document.title;
+      customLog("Title:" + (result.document as any).title,"DEBUG");
+      title = (result.document as any).title;
       customLog("score:" + result.score,"DEBUG");
       customLog("Reranker Score:" + result.rerankerScore,"DEBUG");
   
       if (result.captions) {
         const caption = result.captions[0];
-        if (caption.highlights) {
-          customLog("Caption highlights:" + result.highlights,"DEBUG");
+        customLog("Caption text:" + caption.text,"DEBUG");
+        if (result.rerankerScore && result.rerankerScore >= 1.35) {
+          message = caption.text ?? '';
         } else {
-          customLog("Caption text:" + caption.text,"DEBUG");
-          if (result.rerankerScore >= 1.35) {
-            message = caption.text;
-          } else {
-            customLog("Reranker Scoreが1.35未満のため、検索結果無しとして動作:","DEBUG");
-          }
-          //message = caption.text;
+          customLog("Reranker Scoreが1.35未満のため、検索結果無しとして動作:","DEBUG");
         }
+        //message = caption.text;
+        // if (caption.highlights) {
+        //   customLog("Caption highlights:" + result.highlights,"DEBUG");
+        // } else {
+        //   customLog("Caption text:" + caption.text,"DEBUG");
+        //   if (result.rerankerScore && result.rerankerScore >= 1.35) {
+        //     message = caption.text ?? '';
+        //   } else {
+        //     customLog("Reranker Scoreが1.35未満のため、検索結果無しとして動作:","DEBUG");
+        //   }
+        //   //message = caption.text;
+        // }
       } else {
         customLog("No result.captions","DEBUG");
       }
