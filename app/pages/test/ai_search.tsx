@@ -1,9 +1,18 @@
 import React, { useState } from 'react';
+import {FormControlLabel, Checkbox, Box, Typography} from '@mui/material';
 import { ExtendMessageModel } from '@/types'; // Add this import statement
 import '@chatscope/chat-ui-kit-styles/dist/default/styles.min.css';
 import { ChatContainer, MainContainer, Message, MessageInput, MessageList, MessageModel } from '@chatscope/chat-ui-kit-react';
 import { v4 as uuidv4 } from 'uuid';
 import { customLog } from '@/utils/customLog';
+
+
+import AppBar from '@mui/material/AppBar';
+import Toolbar from '@mui/material/Toolbar';
+import Button from '@mui/material/Button';
+import IconButton from '@mui/material/IconButton';
+import MenuIcon from '@mui/icons-material/Menu';
+
 
 // ページコンポーネント
   const ChatWithAiTest = () => {
@@ -86,26 +95,21 @@ import { customLog } from '@/utils/customLog';
   // Pageコンポーネント
   return (
     <div>
-      <h1>Interaction with ChatGPT 3.5</h1>
-      <div>
-        <label>
-          <input
-            type="checkbox"
-            checked={useSummary}
-            onChange={e => setUseSummary(e.target.checked)}
-          />
-          AI Search結果をAzureOpenAIを使用して要約する
-        </label>
+<AppBar position="static">
+  <Toolbar variant="dense">
+    {/* <IconButton edge="start" color="inherit" aria-label="menu" sx={{ mr: 2 }}>
+      <MenuIcon />
+    </IconButton> */}
+    <Typography variant="h6" color="inherit" component="div">
+      社内情報検索(Azure AI Search)
+    </Typography>
+  </Toolbar>
+</AppBar>
+      <div style={{ marginBottom: '-15px' }}>
+        <FormControlLabel control={<Checkbox defaultChecked  size="small"/>} label="AI Search結果をAzureOpenAIを使用して要約する" />
       </div>
       <div>
-        <label>
-          <input
-            type="checkbox"
-            checked={useFallback}
-            onChange={e => setUseFallback(e.target.checked)}
-          />
-          AI Search結果が存在しない場合、AzureOpenAIを使用して一般的な回答を取得する
-        </label>
+        <FormControlLabel control={<Checkbox defaultChecked  size="small"/>} label="AI Search結果が存在しない場合、AzureOpenAIを使用して一般的な回答を取得する" />
       </div>
       <div style={{ position: "relative", height: "500px" }}>
         <MainContainer>
