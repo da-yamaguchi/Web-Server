@@ -23,6 +23,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === 'POST') {
     customLog(req.body,"DEBUG");
     const requestMessage: string = req.body.message;
+    customLog(requestMessage,"DEBUG");
 
     if(requestMessage == "") {
       customLog("requestMessage is empty","DEBUG");

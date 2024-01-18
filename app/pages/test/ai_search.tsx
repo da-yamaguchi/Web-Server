@@ -29,6 +29,7 @@ import ListItemText from '@mui/material/ListItemText';
 import MonitorIcon from '@mui/icons-material/Monitor';
 import HelpIcon from '@mui/icons-material/Help';
 import Popover from '@mui/material/Popover';
+import TextField from '@mui/material/TextField';
 
 // Material UI drawer sample code start
 const drawerWidth = 240;
@@ -92,16 +93,6 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 
   // メッセージのstateを作成
   const [messages, setMessages] = useState<Array<ExtendMessageModel>>([]);
-  // const [messages, setMessages] = useState<Array<ExtendMessageModel>>([
-  //   {
-  //     id: uuidv4(),
-  //     message: "初期入力メッセージ",
-  //     sentTime: "just now",
-  //     sender: "Bot",
-  //     direction: "outgoing",
-  //     position: "single"
-  //   }
-  // ]);
 
   // メッセージの送信機能の追加
   const handleSendMessage = async (messageText:string) => {
@@ -140,8 +131,8 @@ const DrawerHeader = styled('div')(({ theme }) => ({
         data = await fetch('/api/getCustomMessageFromAiSearch', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        //body: JSON.stringify({ message: context, useSummary, useFallback }),
-        body: JSON.stringify({ message: context }),
+        body: JSON.stringify({ message: context, useSummary, useFallback }),
+        // body: JSON.stringify({ message: context }),
       });
     }catch(e){
       console.log("Error : chat_ai_test.tsx is bad function");
@@ -221,12 +212,27 @@ const DrawerHeader = styled('div')(({ theme }) => ({
               horizontal: 'left',
             }}
           >
-            {/* <Typography sx={{ p: 2 }}>The content of the Popover.</Typography> */}
-            <Box style={{ marginBottom: '-15px' }}>
-              <FormControlLabel control={<Checkbox defaultChecked  size="small"/>} label="AI Search結果をAzureOpenAIを使用して要約する" />
+            <Box sx={{ margin: '0px 0px 10px 10px' }}>
+              <FormControlLabel
+                control={<Checkbox defaultChecked size="small" />}
+                label={<Typography variant="body2">AI Search結果をAzureOpenAIを使用して要約する</Typography>}
+              />
             </Box>
-            <Box>
-              <FormControlLabel control={<Checkbox defaultChecked  size="small"/>} label="AI Search結果が存在しない場合、AzureOpenAIを使用して一般的な回答を取得する" />
+            <Box sx={{ margin: '-15px 0px 10px 10px' }}>
+              <FormControlLabel
+                control={<Checkbox defaultChecked size="small" />}
+                label={<Typography variant="body2">AI Search結果が存在しない場合、AzureOpenAIを使用して一般的な回答を取得する</Typography>}
+              />
+            </Box>
+            <Box sx={{ padding: '10px 10px' }}>
+              <TextField
+                id="outlined-multiline-static"
+                label="System Message"
+                multiline
+                rows={4}
+                defaultValue="日本語で要約してください。"
+                sx={{ width: '100%' }}
+              />
             </Box>
           </Popover>
           <Tooltip title="Help">
@@ -272,13 +278,7 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 
       <Main open={open}>
         <DrawerHeader />
-        {/* <Box style={{ marginBottom: '-15px' }}>
-          <FormControlLabel control={<Checkbox defaultChecked  size="small"/>} label="AI Search結果をAzureOpenAIを使用して要約する" />
-        </Box>
-        <Box>
-          <FormControlLabel control={<Checkbox defaultChecked  size="small"/>} label="AI Search結果が存在しない場合、AzureOpenAIを使用して一般的な回答を取得する" />
-        </Box> */}
-        <Box style={{ position: "relative", height: "500px" }}>
+        <Box style={{ height: "calc(100vh - 120px)" }}>
           <MainContainer>
             <ChatContainer>
               <MessageList>
