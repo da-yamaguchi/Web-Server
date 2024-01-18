@@ -90,9 +90,14 @@ const DrawerHeader = styled('div')(({ theme }) => ({
   const ChatWithAiTest = () => {
   const [useSummary, setUseSummary] = useState(false);
   const [useFallback, setUseFallback] = useState(false);
+  const [systemMessage, setSystemMessage] = useState("日本語で要約してください。");
 
   // メッセージのstateを作成
   const [messages, setMessages] = useState<Array<ExtendMessageModel>>([]);
+
+  const handleSystemMessageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSystemMessage(event.target.value);
+  };
 
   // メッセージの送信機能の追加
   const handleSendMessage = async (messageText:string) => {
@@ -142,7 +147,36 @@ const DrawerHeader = styled('div')(({ theme }) => ({
     if (data.ok) {
       const response = await data.json();
       if(response.success) {
-        return response.message;
+        // return response.message;
+        const resultMessage = response.message;
+        // 追加: useSummary または useFallback が true の場合は新しいAPIを実行
+        if (useSummary || useFallback) {
+          try {
+            const additionalData = await fetch('/api/getCustomMessageFromChatGPT', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              // body: JSON.stringify({ message: resultMessage }),
+              body: JSON.stringify({ message: resultMessage, systemMessage}),
+            });
+
+            if (additionalData.ok) {
+              const additionalResponse = await additionalData.json();
+              if (additionalResponse.success) {
+                return additionalResponse.message;
+              } else {
+                customLog("Additional response message is empty" + additionalResponse.message);
+                return additionalResponse.message;
+              }
+            } else {
+              customLog("Additional response was failed");
+              return "エラーです";
+            }
+          } catch (additionalError) {
+            console.error('Error while fetching additional data:', additionalError);
+            return "エラーです";
+          }
+        }
+        return resultMessage;
       } else {
         customLog("response message is empty" + response.message);
         return response.message;
@@ -231,7 +265,8 @@ const DrawerHeader = styled('div')(({ theme }) => ({
                 label="System Message"
                 multiline
                 rows={4}
-                defaultValue="日本語で要約してください。"
+                value={systemMessage}
+                onChange={handleSystemMessageChange}
                 sx={{ width: '100%' }}
               />
             </Box>
