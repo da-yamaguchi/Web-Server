@@ -125,14 +125,13 @@ const DrawerHeader = styled('div')(({ theme }) => ({
   };
 
   const fetchData = async (context: string): Promise<string> => {
-    //let data: any = undefined;
     let data: any = undefined;
     try{
         data = await fetch('/api/getCustomMessageFromAiSearch', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: context, useSummary, useFallback }),
-        // body: JSON.stringify({ message: context }),
+        // body: JSON.stringify({ message: context, useSummary, useFallback }),
+        body: JSON.stringify({ message: context }),
       });
     }catch(e){
       console.log("Error : chat_ai_test.tsx is bad function");
@@ -214,13 +213,15 @@ const DrawerHeader = styled('div')(({ theme }) => ({
           >
             <Box sx={{ margin: '0px 0px 10px 10px' }}>
               <FormControlLabel
-                control={<Checkbox defaultChecked size="small" />}
+                control={<Checkbox checked={useSummary} size="small" onChange={() => setUseSummary(!useSummary)} />}
+                // control={<Checkbox defaultChecked size="small" />}
                 label={<Typography variant="body2">AI Search結果をAzureOpenAIを使用して要約する</Typography>}
               />
             </Box>
             <Box sx={{ margin: '-15px 0px 10px 10px' }}>
               <FormControlLabel
-                control={<Checkbox defaultChecked size="small" />}
+                control={<Checkbox checked={useFallback} size="small" onChange={() => setUseFallback(!useFallback)} />}
+                // control={<Checkbox defaultChecked size="small" />}
                 label={<Typography variant="body2">AI Search結果が存在しない場合、AzureOpenAIを使用して一般的な回答を取得する</Typography>}
               />
             </Box>
