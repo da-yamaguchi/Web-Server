@@ -250,19 +250,17 @@ const ChatWithAiTest = () => {
               vertical: 'bottom',
               horizontal: 'left',
             }}
-          >
+            sx={{
+              '& .MuiPaper-root': {
+                width: 600, // 任意の横幅を指定
+              },
+            }}
+            >
             <Box sx={{ margin: '0px 0px 10px 10px' }}>
               <FormControlLabel
                 control={<Checkbox checked={useSummary} size="small" onChange={() => setUseSummary(!useSummary)} />}
                 // control={<Checkbox defaultChecked size="small" />}
                 label={<Typography variant="body2">AI Search結果をAzureOpenAIを使用して要約する</Typography>}
-              />
-            </Box>
-            <Box sx={{ margin: '-15px 0px 10px 10px' }}>
-              <FormControlLabel
-                control={<Checkbox checked={useFallback} size="small" onChange={() => setUseFallback(!useFallback)} />}
-                // control={<Checkbox defaultChecked size="small" />}
-                label={<Typography variant="body2">AI Search結果が存在しない場合、AzureOpenAIを使用して一般的な回答を取得する</Typography>}
               />
             </Box>
             <Box sx={{ padding: '10px 10px' }}>
@@ -274,6 +272,7 @@ const ChatWithAiTest = () => {
                 value={summarySystemMessage}
                 onChange={handleSummarySystemMessageChange}
                 sx={{ width: '100%' }}
+                disabled={!useSummary}
               />
             </Box>
           </Popover>
