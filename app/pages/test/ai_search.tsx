@@ -85,18 +85,22 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 
 // Material UI drawer sample code end
 
+// HTMLタグを除去する関数
+function stripHtmlTags(input: string): string {
+  return input.replace(/<[^>]*>?/gm, '');
+}
 
 // ページコンポーネント
-  const ChatWithAiTest = () => {
+const ChatWithAiTest = () => {
   const [useSummary, setUseSummary] = useState(false);
   const [useFallback, setUseFallback] = useState(false);
-  const [systemMessage, setSystemMessage] = useState("日本語で要約してください。");
+  const [summarySystemMessage, setSummarySystemMessage] = useState("送られてきたメッセージを日本語で要約してください。ファイル名は省略せずに末尾に記載してください。");
 
   // メッセージのstateを作成
   const [messages, setMessages] = useState<Array<ExtendMessageModel>>([]);
 
-  const handleSystemMessageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSystemMessage(event.target.value);
+  const handleSummarySystemMessageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSummarySystemMessage(event.target.value);
   };
 
   // メッセージの送信機能の追加
@@ -132,11 +136,13 @@ const DrawerHeader = styled('div')(({ theme }) => ({
   const fetchData = async (context: string): Promise<string> => {
     let data: any = undefined;
     try{
+        const strippedContext = stripHtmlTags(context);
         data = await fetch('/api/getCustomMessageFromAiSearch', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         // body: JSON.stringify({ message: context, useSummary, useFallback }),
-        body: JSON.stringify({ message: context }),
+        //body: JSON.stringify({ message: context }),
+        body: JSON.stringify({ message: strippedContext  }),
       });
     }catch(e){
       console.log("Error : chat_ai_test.tsx is bad function");
@@ -156,7 +162,7 @@ const DrawerHeader = styled('div')(({ theme }) => ({
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               // body: JSON.stringify({ message: resultMessage }),
-              body: JSON.stringify({ message: resultMessage, systemMessage}),
+              body: JSON.stringify({ message: resultMessage, summarySystemMessage}),
             });
 
             if (additionalData.ok) {
@@ -261,12 +267,12 @@ const DrawerHeader = styled('div')(({ theme }) => ({
             </Box>
             <Box sx={{ padding: '10px 10px' }}>
               <TextField
-                id="outlined-multiline-static"
+                id="TextField-Summary"
                 label="System Message"
                 multiline
                 rows={4}
-                value={systemMessage}
-                onChange={handleSystemMessageChange}
+                value={summarySystemMessage}
+                onChange={handleSummarySystemMessageChange}
                 sx={{ width: '100%' }}
               />
             </Box>

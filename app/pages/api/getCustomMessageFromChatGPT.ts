@@ -10,7 +10,10 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === 'POST') {
     customLog(req.body,"DEBUG");
     const requestMessage: string = req.body.message;
-
+    // const systemMessage: string = req.body.summarySystemMessage;
+    // req.body.summarySystemMessageが存在すればその値を、存在しなければデフォルト値を使用
+    const systemMessage: string = req.body.summarySystemMessage || "システムメッセージ";
+    
     if(requestMessage == "") {
       customLog("requestMessage is empty","DEBUG");
       return res.status(200).json({ success: false, message: "request message is empty" });
@@ -24,7 +27,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     const ai_request = new AIRequest();
     ai_request.model = "gpt-3.5-turbo";
     ai_request.messages = [
-      { role: "system", content: "システムメッセージ" },
+      // { role: "system", content: "システムメッセージ" },
+      { role: "system", content: systemMessage },
       { role: "user", content: requestMessage }
       //{ role: "assistant", content: "システムメッセージ" },
       //{ role: "user", content: "システムメッセージ" },
