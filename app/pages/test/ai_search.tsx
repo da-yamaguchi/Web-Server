@@ -5,7 +5,8 @@ import '@chatscope/chat-ui-kit-styles/dist/default/styles.min.css';
 import { ChatContainer, MainContainer, Message, MessageInput, MessageList, MessageModel } from '@chatscope/chat-ui-kit-react';
 import { v4 as uuidv4 } from 'uuid';
 import { customLog } from '@/utils/customLog';
-
+// import { useNavigate } from 'react-router-dom';
+// import { useHistory } from 'react-router-dom';
 
 //import AppBar from '@mui/material/AppBar';
 import Button from '@mui/material/Button';
@@ -92,8 +93,9 @@ function stripHtmlTags(input: string): string {
 
 // ページコンポーネント
 const ChatWithAiTest = () => {
+  // const navigate = useNavigate();
+  // const history = useHistory();
   const [useSummary, setUseSummary] = useState(false);
-  const [useFallback, setUseFallback] = useState(false);
   const [summarySystemMessage, setSummarySystemMessage] = useState("送られてきたメッセージを日本語で要約してください。ファイル名は省略せずに末尾に記載してください。");
 
   // メッセージのstateを作成
@@ -155,8 +157,7 @@ const ChatWithAiTest = () => {
       if(response.success) {
         // return response.message;
         const resultMessage = response.message;
-        // 追加: useSummary または useFallback が true の場合は新しいAPIを実行
-        if (useSummary || useFallback) {
+        if (useSummary) {
           try {
             const additionalData = await fetch('/api/getCustomMessageFromChatGPT', {
               method: 'POST',
@@ -306,6 +307,8 @@ const ChatWithAiTest = () => {
         <List>
           {['Home', 'AzureOpenAI', 'QA Search', 'Mail Checker'].map((text, index) => (
             <ListItem key={text} disablePadding>
+              {/* <ListItemButton component={Link} to={`/${text}`}> */}
+              {/* <ListItemButton onClick={() => handleListItemClick(text)}> */}
               <ListItemButton>
                 <ListItemIcon>
                 <MonitorIcon />
@@ -337,6 +340,15 @@ const ChatWithAiTest = () => {
       </Main>
     </Box>
   );
+
+  // function handleListItemClick(itemText: string) {
+  //   // 例: 'AzureOpenAI'がクリックされたときに'/chat_ai_test'に遷移
+  //   if (itemText === 'AzureOpenAI') {
+  //     // navigate('/chat_ai_test');
+  //     history.push('/chat_ai_test');
+  //   }
+  //   // 他のアイテムに対する処理も追加可能
+  // }  
 }
 export default ChatWithAiTest;
 
