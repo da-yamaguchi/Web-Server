@@ -169,7 +169,8 @@ const ChatWithAiTest = () => {
             if (additionalData.ok) {
               const additionalResponse = await additionalData.json();
               if (additionalResponse.success) {
-                return additionalResponse.message;
+                return '【ドキュメント検索結果を要約して回答しています】\n' + additionalResponse.message;
+                // return additionalResponse.message;
               } else {
                 customLog("Additional response message is empty" + additionalResponse.message);
                 return additionalResponse.message;
