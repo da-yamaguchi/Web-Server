@@ -4,6 +4,13 @@ import { ChatContainer, MainContainer, Message, MessageInput, MessageList, Messa
 import { v4 as uuidv4 } from 'uuid';
 import { customLog } from '@/utils/customLog';
 
+
+// HTMLタグを除去する関数
+function stripHtmlTags(input: string): string {
+  return input.replace(/<[^>]*>?/gm, '');
+}
+
+
 // ページコンポーネント
 function ChatWithAiTest() {
   // メッセージのstateを作成
@@ -75,10 +82,11 @@ function ChatWithAiTest() {
 async function fetchData(context:string): Promise<string> {
   let data: any = undefined;
   try{
+    const strippedContext = stripHtmlTags(context);
     data = await fetch('/api/getCustomMessageFromQaSearch', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message: context }),
+      body: JSON.stringify({ message: strippedContext }),
     });
   }catch(e){
     console.log("Error : chat_ai_test.tsx is bad function");
