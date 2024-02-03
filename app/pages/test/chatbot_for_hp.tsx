@@ -1,8 +1,18 @@
 import React, { useState } from 'react';
 import Button from '@mui/material/Button';
 import Popover from '@mui/material/Popover';
+import {FormControlLabel, Checkbox, Box, Typography} from '@mui/material';
 import '@chatscope/chat-ui-kit-styles/dist/default/styles.min.css';
-import { ChatContainer, MainContainer, Message, MessageInput, MessageList, MessageModel } from '@chatscope/chat-ui-kit-react';
+import {
+  ChatContainer,
+  MainContainer,
+  Message,
+  MessageInput,
+  MessageList,
+  MessageModel,
+  InputToolbox,
+  AttachmentButton,
+  SendButton } from '@chatscope/chat-ui-kit-react';
 import { v4 as uuidv4 } from 'uuid';
 import { customLog } from '@/utils/customLog';
 
@@ -53,7 +63,7 @@ const ChatBot = () => {
   };
   
   return (
-    <div style={{ height: '100vh', overflow: 'hidden' }}>
+    <Box style={{ height: '100vh', overflow: 'hidden' }}>
         <iframe
           title="Your Company Website"
           src="https://www.link-tech.co.jp/"
@@ -87,10 +97,13 @@ const ChatBot = () => {
         }}
       >
         {/* ここにチャットボットのコンテンツを配置 */}
-        <div style={{ padding: '20px' }}>
+        <Box style={{ padding: '20px' }}>
           {/* チャットボットのコンテンツがここに入ります。 */}
-          <h1>採用関連Bot</h1>
-            <div style={{ position: "relative", height: "500px" }}>
+          <Typography variant="h6" color="inherit" component="div">
+          採用関連Bot
+          </Typography>
+          {/* <h1>採用関連Bot</h1> */}
+            <Box style={{ position: "relative", height: "500px", width: "250px"}}>
                 <MainContainer>
                 <ChatContainer>
                     <MessageList>
@@ -101,13 +114,15 @@ const ChatBot = () => {
                     <MessageInput
                     placeholder="Type message here"
                     onSend={(value: string) => handleSendMessage(value)}
+                    sendButton={false}
+                    attachButton={false}
                     />
                 </ChatContainer>
                 </MainContainer>
-            </div>
-        </div>
+            </Box>
+        </Box>
       </Popover>
-    </div>
+    </Box>
   );
 };
 

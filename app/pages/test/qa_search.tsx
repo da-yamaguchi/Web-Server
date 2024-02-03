@@ -176,7 +176,7 @@ function ChatWithAiTest() {
         >
           <MenuIcon />
         </IconButton>
-        <Typography variant="h6" color="inherit" component="div">
+        <Typography variant="h5" color="inherit" component="div">
           QA(Custom question answering)
         </Typography>
         <Box sx={{ flexGrow: 1 }} />
