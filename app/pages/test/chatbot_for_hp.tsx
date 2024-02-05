@@ -16,6 +16,11 @@ import {
 import { v4 as uuidv4 } from 'uuid';
 import { customLog } from '@/utils/customLog';
 
+// HTMLタグを除去する関数
+function stripHtmlTags(input: string): string {
+  return input.replace(/<[^>]*>?/gm, '');
+}
+
 const ChatBot = () => {
   const [messages, setMessages] = useState<Array<ExtendMessageModel>>([]);
 
@@ -107,9 +112,18 @@ const ChatBot = () => {
                 <MainContainer>
                 <ChatContainer>
                     <MessageList>
-                    {messages.map(msg => (
+                    <MessageList.Content style={{
+                      // display: "flex",
+                      // "flexDirection": "column",
+                      // "justifyContent": "center",
+                      // height: "100%",
+                      // textAlign: "center",
+                      fontSize: "0.8em"
+                    }}>
+                        {messages.map(msg => (
                         <Message key={msg.id} model={msg} />
                     ))}
+                    </MessageList.Content>
                     </MessageList>
                     <MessageInput
                     placeholder="Type message here"
@@ -129,11 +143,15 @@ const ChatBot = () => {
 // APIを叩いてレスポンスを受ける.
 async function fetchData(context:string): Promise<string> {
     let data: any = undefined;
+    // const project: string = process.env.AZURE_QUESTIONANSWERING_RECRUITMENT_INFO!;
+    let project = "recruitment";
     try{
-      data = await fetch('/api/getCustomMessageFromChatGPT', {
+      const strippedContext = stripHtmlTags(context);
+      data = await fetch('/api/getCustomMessageFromQaSearch', {
+        // data = await fetch('/api/getCustomMessageFromChatGPT', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: context }),
+        body: JSON.stringify({ message: context, project }),
       });
     }catch(e){
       console.log("Error : chat_ai_test.tsx is bad function");

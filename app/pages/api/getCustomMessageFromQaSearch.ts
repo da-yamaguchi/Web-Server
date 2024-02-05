@@ -5,8 +5,7 @@ const axios = require('axios');
 
 const ENDPOINT: string = process.env.AZURE_QUESTIONANSWERING_ENDPOINT!;
 const KEY: string = process.env.AZURE_QUESTIONANSWERING_KEY!;
-const PROJECT: string = process.env.AZURE_QUESTIONANSWERING_PROJECT!;
-
+// const PROJECT: string = process.env.AZURE_QUESTIONANSWERING_PROJECT!;
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
 if (req.method === 'POST') {
@@ -18,6 +17,10 @@ if (req.method === 'POST') {
     return res.status(200).json({ success: false, message: "request message is empty" });
     }
 
+    const PROJECT: string = req.body.project === "recruitment"
+    ? process.env.AZURE_QUESTIONANSWERING_RECRUITMENT_INFO || "デフォルトの値"
+    : process.env.AZURE_QUESTIONANSWERING_PROJECT || "デフォルトの値";
+
     const apiUrl = `${ENDPOINT}language/:query-knowledgebases?api-version=2021-10-01&deploymentName=production&projectName=${PROJECT}`;
 
     const headers = {
@@ -28,24 +31,8 @@ if (req.method === 'POST') {
     const requestBody = {
         question: requestMessage,
         top: 3,
-        // userId: 'sd53lsY=',
         confidenceScoreThreshold: 0.2,
-        // context: {
-        //   previousQnaId: 9,
-        //   previousUserQuery: 'Where are QnA Maker quickstarts?',
-        // },
         rankerType: 'Default',
-        // filters: {
-        //   metadataFilter: {
-        //     metadata: [
-        //       { key: 'category', value: 'api' },
-        //       { key: 'editorial', value: 'chitchat' },
-        //     ],
-        //     logicalOperation: 'AND',
-        //   },
-        //   sourceFilter: ['filename1.pdf', 'https://www.wikipedia.org/microsoft'],
-        //   logicalOperation: 'AND',
-        // },
         answerSpanRequest: {
           enable: true,
           confidenceScoreThreshold: 0.2,
